@@ -3,7 +3,7 @@ import os
 import random
 import discord
 from dotenv import load_dotenv
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 # load_dotenv() loads environment variables from .env file
 load_dotenv()
@@ -36,10 +36,11 @@ async def on_member_join(member):
 # Pick a random game to play based on user input. 
 # Games must be seperated by comma only. Eg, BF1,warzone,minecraft
 @bot.command(name='pickgame', help='| Pick a random game. Games must be seperated by comma only.')
-async def random_game(ctx, games: str):
+async def random_game(ctx, games):
 
     list_of_games = games.split(',')
 
+    # Randomly pick one game from list
     response = random.choice(list_of_games)
     await ctx.send(f'Randomly picked: {response}')
 
@@ -52,5 +53,13 @@ async def on_error(event, *args, **kwargs):
         else:
             raise
 
-# Run Client using bot token
+@bot.command(name='kick', help='| Kick person from server.')
+async def kick(ctx, member : discord.Member, *, reason=None):
+    await member.kick(reason=reason)
+
+@bot.command(name='ban', help='| Ban person from server.')
+async def ban(ctx, member : discord.Member, *, reason=None):
+    await member.ban(reason=reason)
+
+#  Run Client using bot token
 bot.run(TOKEN)
